@@ -1,0 +1,205 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <div class="container text-center" style="margin-top: 15px; margin-bottom: 40px">
+        <div class="row">
+            {% for cat in category %}
+                <div class="col card" style="padding: 0px 5px 0px 5px; margin: 0px 10px 0px 10px">
+                    <div style="border-bottom: solid; margin-top: 10px">
+                        <h5 class="text-uppercase">{{ cat.name }}</h5>
+                    </div>
+                    {% for card in object_list %}
+                        {% if card.category == cat %}
+                            <div class="card" style="margin: 15px 5px 15px 5px">
+                                <h5 class="card-header">{{ card.title }}</h5>
+                                <div class="card-body">
+                                    <p class="card-text">{{ card.text }}</p>
+                                    <p class="text-start">Assignee: {{ card.assignee }}</p>
+                                    <p class="text-start">Reporter: {{ card.reporter }}</p>
+                                    {% if request.user == card.assignee or request.user == card.reporter or request.user.is_staff or request.user.is_superuser %}
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal{{ card.id }}"
+                                                data-bs-whatever="@getbootstrap">Update
+                                        </button>
+                                        {% if request.user.is_staff or request.user.is_superuser %}
+                                            <!-- Button trigger modal delete -->
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#exampleModal_del_{{ card.id }}">
+                                                Delete
+                                            </button>
+
+                                            <!-- Modal delete -->
+                                            <div class="modal fade" id="exampleModal_del_{{ card.id }}" tabindex="-1"
+                                                 aria-labelledby="exampleModalLabel_del_{{ card.id }}"
+                                                 aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5"
+                                                                id="exampleModalLabel_del_{{ card.id }}">Deleting a
+                                                                card</h1>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="text-start">This action can not be undone!!!</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <form method="post" action={% url "card-delete" %}>
+                                                                {% csrf_token %}
+                                                                <input type="hidden" class="form-control"
+                                                                       name="del_card_id"
+                                                                       value={{ card.id }}>
+                                                                <button type="submit" class="btn btn-success">Yes
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <div class="modal fade" id="exampleModal{{ card.id }}" tabindex="-1"
+                                             aria-labelledby="exampleModalLabel{{ card.id }}"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5"
+                                                            id="exampleModalLabel{{ card.id }}">
+                                                            Card update</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="post" action={% url "card-update" %}>
+                                                            {% csrf_token %}
+                                                            {% if request.user == card.assignee and not request.user.is_superuser and not request.user.is_staff %}
+                                                                <div class="mb-3">
+                                                                    <label for="status{{ card.id }}"
+                                                                           class="form-label"
+                                                                           style="margin-right: 10px">Status: </label>
+                                                                    <select class="form-select" name="category"
+                                                                            id="status{{ card.id }}">
+                                                                        aria-label="Default select example">
+                                                                        {% if card.category.name == 'New' %}
+                                                                            {% for item in category|slice:":2" %}
+                                                                                {% if item == card.category %}
+                                                                                    <option value={{ item.id }} selected>{{ item }}</option>
+                                                                                {% elif item.name != 'Done' %}
+                                                                                    <option value={{ item.id }}>{{ item }}</option>
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        {% endif %}
+                                                                        {% if card.category.name == 'In progress' %}
+                                                                            {% for item in category|slice:":3" %}
+                                                                                {% if item == card.category %}
+                                                                                    <option value={{ item.id }} selected>{{ item }}</option>
+                                                                                {% elif item.name != 'Done' %}
+                                                                                    <option value={{ item.id }}>{{ item }}</option>
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        {% endif %}
+                                                                        {% if card.category.name == 'In QA' %}
+                                                                            {% for item in category|slice:"1:4" %}
+                                                                                {% if item == card.category %}
+                                                                                    <option value={{ item.id }} selected>{{ item }}</option>
+                                                                                {% elif item.name != 'Done' %}
+                                                                                    <option value={{ item.id }}>{{ item }}</option>
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        {% endif %}
+                                                                        {% if card.category.name == 'Ready' %}
+                                                                            {% for item in category|slice:"2:4" %}
+                                                                                {% if item == card.category %}
+                                                                                    <option value={{ item.id }} selected>{{ item }}</option>
+                                                                                {% elif item.name != 'Done' %}
+                                                                                    <option value={{ item.id }}>{{ item }}</option>
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        {% endif %}
+                                                                    </select>
+                                                                </div>
+                                                            {% endif %}
+                                                            {% if request.user.is_superuser or request.user.is_staff %}
+                                                                <div class="mb-3">
+                                                                    <label for="super_status{{ card.id }}"
+                                                                           class="form-label">Status: </label>
+                                                                    <select class="form-select" name="category"
+                                                                            id="super_status{{ card.id }}">
+                                                                        aria-label="Default select example">
+                                                                        {% for item in category %}
+                                                                            {% if item == card.category and item.name != 'Ready' and item.name != 'Done' %}
+                                                                                <option value={{ item.id }} selected>{{ item }}</option>
+                                                                            {% endif %}
+                                                                            {% if item.name == 'Ready' or item.name == 'Done' %}
+                                                                                {% if item == card.category %}
+                                                                                    <option value={{ item.id }} selected>{{ item }}</option>
+                                                                                {% else %}
+                                                                                    <option value={{ item.id }}>{{ item }}</option>
+                                                                                {% endif %}
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            {% endif %}
+                                                            {% if request.user.is_superuser or request.user.is_staff %}
+                                                                <div class="mb-3">
+                                                                    <label for="user_pic_for_{{ card.id }}"
+                                                                           class="form-label">Assignee: </label>
+                                                                    <select class="form-select" name="assignee"
+                                                                            id="user_pic_for_{{ card.id }}">
+                                                                        aria-label="Default select example">
+                                                                        {% for user in users %}
+                                                                            {% if user == card.assignee %}
+                                                                                <option value={{ user.id }} selected>{{ user }}</option>
+                                                                            {% else %}
+                                                                                <option value={{ user.id }}>{{ user }}</option>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            {% endif %}
+                                                            <input type="hidden" class="form-control" name="card_id"
+                                                                   value={{ card.id }}>
+                                                            {% if request.user == card.reporter or request.user.is_staff %}
+                                                                <div class="mb-3" style="margin-top: 15px">
+                                                                    <label for="title{{ card.id }}"
+                                                                           class="form-label">Card title: </label>
+                                                                    <input maxlength="100" type="text"
+                                                                           class="form-control"
+                                                                           name="card_title"
+                                                                           id="title{{ card.id }}"
+                                                                           value={{ card.title }}>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="text{{ card.id }}"
+                                                                           class="form-label">Card text: </label>
+                                                                    <textarea maxlength="400" class="form-control"
+                                                                              id="text{{ card.id }}"
+                                                                              name="card_text">{{ card.text }}</textarea>
+                                                                </div>
+                                                            {% endif %}
+                                                            <button type="submit" class="btn btn-primary">Update
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">
+                                                            Close
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

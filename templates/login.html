@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-sm" style="margin-top: 100px; width: 300px; color: white">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Login" class="btn btn-outline-success" style="width: 150px;">
+    </form>
+    <a class="nav-link" style="margin-top: 15px" href={% url 'registration' %}>Registration</a>
+</div>
+{% endblock %}
