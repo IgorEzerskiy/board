@@ -38,3 +38,5 @@ class CardCreateForm(forms.ModelForm):
         self.fields['assignee'].widget.attrs.update({'class': 'form-control'})
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
         self.fields['text'].widget.attrs.update({'class': 'form-control'})
+
+    # TODO:Дописать валидации на каждый филд
