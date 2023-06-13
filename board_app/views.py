@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
@@ -12,6 +12,10 @@ from django import forms
 
 
 # Create your views here.
+
+class AdminPassedMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
 
 
 class CardsListView(LoginRequiredMixin, ListView):
@@ -172,7 +176,7 @@ class CardUpdateView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.success_url)
 
 
-class CardDeleteView(LoginRequiredMixin, DeleteView):
+class CardDeleteView(AdminPassedMixin, LoginRequiredMixin, DeleteView):
     login_url = 'login/'
     success_url = '/'
 

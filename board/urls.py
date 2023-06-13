@@ -15,8 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from django.views.generic import TemplateView
+from django.urls import path, include
 
 from board_app.views import CardsListView, UserLoginView, UserLogoutView, \
                             UserCreateView, CardCreateView, CardUpdateView, \
@@ -30,5 +29,6 @@ urlpatterns = [
     path('registration/', UserCreateView.as_view(), name='registration'),
     path('card-create/', CardCreateView.as_view(), name='card-create'),
     path('card_update/', CardUpdateView.as_view(), name='card-update'),
-    path('card-delete/', CardDeleteView.as_view(), name='card-delete')
+    path('card-delete/', CardDeleteView.as_view(), name='card-delete'),
+    path('', include('board_app.urls'))
 ]
