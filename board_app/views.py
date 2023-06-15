@@ -160,14 +160,14 @@ class CardUpdateView(LoginRequiredMixin, UpdateView):
             messages.error(self.request,
                            f'Category does not exist.')
             return HttpResponseRedirect(self.success_url)
-
-        try:
-            user = User.objects.get(id=self.request.POST.get('assignee'))
-            update_data['assignee'] = user.id
-        except User.DoesNotExist:
-            messages.error(self.request,
-                           f'User does not exist.')
-            return HttpResponseRedirect(self.success_url)
+        if self.request.POST.get('assignee'):
+            try:
+                user = User.objects.get(id=self.request.POST.get('assignee'))
+                update_data['assignee'] = user.id
+            except User.DoesNotExist:
+                messages.error(self.request,
+                               f'User does not exist.')
+                return HttpResponseRedirect(self.success_url)
 
         card.update(**update_data)
 
