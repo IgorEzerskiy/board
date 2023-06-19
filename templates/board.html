@@ -128,18 +128,28 @@
                                                                     <select class="form-select" name="category"
                                                                             id="super_status{{ card.id }}">
                                                                         aria-label="Default select example">
-                                                                        {% for item in category %}
-                                                                            {% if item == card.category and item.name != 'Ready' and item.name != 'Done' %}
-                                                                                <option value={{ item.id }} selected>{{ item }}</option>
-                                                                            {% endif %}
-                                                                            {% if item.name == 'Ready' or item.name == 'Done' %}
+                                                                        {% if request.user.is_staff and request.user == card.assignee %}
+                                                                            {% for item in category %}
                                                                                 {% if item == card.category %}
                                                                                     <option value={{ item.id }} selected>{{ item }}</option>
                                                                                 {% else %}
                                                                                     <option value={{ item.id }}>{{ item }}</option>
                                                                                 {% endif %}
-                                                                            {% endif %}
-                                                                        {% endfor %}
+                                                                            {% endfor %}
+                                                                        {% else %}
+                                                                            {% for item in category %}
+                                                                                {% if item == card.category and item.name != 'Ready' and item.name != 'Done' %}
+                                                                                    <option value={{ item.id }} selected>{{ item }}</option>
+                                                                                {% endif %}
+                                                                                {% if item.name == 'Ready' or item.name == 'Done' %}
+                                                                                    {% if item == card.category %}
+                                                                                        <option value={{ item.id }} selected>{{ item }}</option>
+                                                                                    {% else %}
+                                                                                        <option value={{ item.id }}>{{ item }}</option>
+                                                                                    {% endif %}
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        {% endif %}
                                                                     </select>
                                                                 </div>
                                                             {% endif %}

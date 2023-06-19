@@ -84,7 +84,6 @@ class CardUpdateView(LoginRequiredMixin, UpdateView):
         if self.request.POST.get('card_title'):
             if len(self.request.POST.get('card_title')) > 100:
                 messages.error(self.request, 'Title must be less than 100 characters.')
-                # raise ValidationError(message='Title must be less than 100 characters.')
                 return HttpResponseRedirect(self.success_url)
             else:
                 update_data['title'] = self.request.POST.get('card_title')
@@ -92,7 +91,6 @@ class CardUpdateView(LoginRequiredMixin, UpdateView):
             if self.request.POST.get('card_text'):
                 if len(self.request.POST.get('card_text')) > 400:
                     messages.error(self.request, 'Text must be less than 400 characters.')
-                    # raise ValidationError(message='Text must be less than 400 characters.')
                     return HttpResponseRedirect(self.success_url)
                 else:
                     update_data['text'] = self.request.POST.get('card_text')
@@ -100,31 +98,22 @@ class CardUpdateView(LoginRequiredMixin, UpdateView):
             if self.request.POST.get('category'):
                 category = Category.objects.get(id=self.request.POST.get('category'))
                 if (self.request.user.is_staff or self.request.user.is_superuser) \
-                            and category.name in ('New', 'In progress', 'In QA'):
+                        and category.name in ('New', 'In progress', 'In QA'):
                     messages.error(self.request,
                                    'Staff can not move card to status: New, In progress, In QA.')
                     return HttpResponseRedirect(self.success_url)
-                        # raise ValidationError(
-                        #    message='Staff can not move card to status: New, In progress, In QA.'
-                        # )
 
                 if (not self.request.user.is_staff or not self.request.user.is_superuser) \
                         and category.name == 'Done':
                     messages.error(self.request,
                                    'User can not move card to status: Done.')
                     return HttpResponseRedirect(self.success_url)
-                        # raise ValidationError(
-                        #    message='User can not move card to status: Done.'
-                        # )
 
                 if card.first().category.name == 'New' and category.name not in ('New', 'In progress') \
                         and (not self.request.user.is_superuser or not self.request.user.is_staff):
                     messages.error(self.request,
                                    f'You can not move card to status: {category.name}.')
                     return HttpResponseRedirect(self.success_url)
-                        # raise ValidationError(
-                        #    message=f'You can not move card to status: {category.name}.'
-                        # )
 
                 if card.first().category.name == 'In progress' and \
                         category.name not in ('New', 'In progress', 'In QA') \
@@ -132,28 +121,19 @@ class CardUpdateView(LoginRequiredMixin, UpdateView):
                     messages.error(self.request,
                                    f'You can not move card to status: {category.name}.')
                     return HttpResponseRedirect(self.success_url)
-                        # raise ValidationError(
-                        #    message=f'You can not move card to status: {category.name}.'
-                        # )
 
                 if card.first().category.name == 'In QA' and category.name not in (
                         'In progress', 'In QA', 'Ready') \
                         and (not self.request.user.is_superuser or not self.request.user.is_staff):
                     messages.error(self.request,
-                                    f'You can not move card to status: {category.name}.')
+                                   f'You can not move card to status: {category.name}.')
                     return HttpResponseRedirect(self.success_url)
-                        # raise ValidationError(
-                        #    message=f'You can not move card to status: {category.name}.'
-                        # )
 
                 if card.first().category.name == 'Ready' and category.name not in ('In QA', 'Ready') \
                         and (not self.request.user.is_superuser or not self.request.user.is_staff):
                     messages.error(self.request,
                                    f'You can not move card to status: {category.name}.')
                     return HttpResponseRedirect(self.success_url)
-                        # raise ValidationError(
-                        #    message=f'You can not move card to status: {category.name}.'
-                        # )
 
                 update_data['category'] = self.request.POST.get('category')
         except Category.DoesNotExist:
