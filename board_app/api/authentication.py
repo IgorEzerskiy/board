@@ -13,6 +13,8 @@ class TokenExpiredAuthentication(TokenAuthentication):
 
         if (timezone.now() - token.created).seconds > settings.TOKEN_LIFETIME:
             token.delete()
-            raise exceptions.AuthenticationFailed('Token was created more the 60 seconds ago.')
+            raise exceptions.AuthenticationFailed(
+                f'Token was created more the {settings.TOKEN_LIFETIME} seconds ago.'
+            )
         return user, token
 
