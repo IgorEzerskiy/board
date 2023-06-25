@@ -75,6 +75,7 @@ class CardCreateView(CreateView):
 
 
 class CardUpdateView(LoginRequiredMixin, UpdateView):
+    # API Done
     login_url = 'login/'
     success_url = '/'
 

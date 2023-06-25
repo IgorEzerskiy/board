@@ -74,52 +74,54 @@
                                                     <div class="modal-body">
                                                         <form method="post" action={% url "card-update" %}>
                                                             {% csrf_token %}
-                                                            {% if request.user == card.assignee and not request.user.is_superuser and not request.user.is_staff %}
-                                                                <div class="mb-3">
-                                                                    <label for="status{{ card.id }}"
-                                                                           class="form-label"
-                                                                           style="margin-right: 10px">Status: </label>
-                                                                    <select class="form-select" name="category"
-                                                                            id="status{{ card.id }}">
-                                                                        aria-label="Default select example">
-                                                                        {% if card.category.name == 'New' %}
-                                                                            {% for item in category|slice:":2" %}
-                                                                                {% if item == card.category %}
-                                                                                    <option value={{ item.id }} selected>{{ item }}</option>
-                                                                                {% elif item.name != 'Done' %}
-                                                                                    <option value={{ item.id }}>{{ item }}</option>
-                                                                                {% endif %}
-                                                                            {% endfor %}
-                                                                        {% endif %}
-                                                                        {% if card.category.name == 'In progress' %}
-                                                                            {% for item in category|slice:":3" %}
-                                                                                {% if item == card.category %}
-                                                                                    <option value={{ item.id }} selected>{{ item }}</option>
-                                                                                {% elif item.name != 'Done' %}
-                                                                                    <option value={{ item.id }}>{{ item }}</option>
-                                                                                {% endif %}
-                                                                            {% endfor %}
-                                                                        {% endif %}
-                                                                        {% if card.category.name == 'In QA' %}
-                                                                            {% for item in category|slice:"1:4" %}
-                                                                                {% if item == card.category %}
-                                                                                    <option value={{ item.id }} selected>{{ item }}</option>
-                                                                                {% elif item.name != 'Done' %}
-                                                                                    <option value={{ item.id }}>{{ item }}</option>
-                                                                                {% endif %}
-                                                                            {% endfor %}
-                                                                        {% endif %}
-                                                                        {% if card.category.name == 'Ready' %}
-                                                                            {% for item in category|slice:"2:4" %}
-                                                                                {% if item == card.category %}
-                                                                                    <option value={{ item.id }} selected>{{ item }}</option>
-                                                                                {% elif item.name != 'Done' %}
-                                                                                    <option value={{ item.id }}>{{ item }}</option>
-                                                                                {% endif %}
-                                                                            {% endfor %}
-                                                                        {% endif %}
-                                                                    </select>
-                                                                </div>
+                                                            {% if not request.user.is_superuser and card.category.name != 'Done' %}
+                                                                {% if request.user == card.assignee and not request.user.is_superuser and not request.user.is_staff %}
+                                                                    <div class="mb-3">
+                                                                        <label for="status{{ card.id }}"
+                                                                               class="form-label"
+                                                                               style="margin-right: 10px">Status: </label>
+                                                                        <select class="form-select" name="category"
+                                                                                id="status{{ card.id }}">
+                                                                            aria-label="Default select example">
+                                                                            {% if card.category.name == 'New' %}
+                                                                                {% for item in category|slice:":2" %}
+                                                                                    {% if item == card.category %}
+                                                                                        <option value={{ item.id }} selected>{{ item }}</option>
+                                                                                    {% elif item.name != 'Done' %}
+                                                                                        <option value={{ item.id }}>{{ item }}</option>
+                                                                                    {% endif %}
+                                                                                {% endfor %}
+                                                                            {% endif %}
+                                                                            {% if card.category.name == 'In progress' %}
+                                                                                {% for item in category|slice:":3" %}
+                                                                                    {% if item == card.category %}
+                                                                                        <option value={{ item.id }} selected>{{ item }}</option>
+                                                                                    {% elif item.name != 'Done' %}
+                                                                                        <option value={{ item.id }}>{{ item }}</option>
+                                                                                    {% endif %}
+                                                                                {% endfor %}
+                                                                            {% endif %}
+                                                                            {% if card.category.name == 'In QA' %}
+                                                                                {% for item in category|slice:"1:4" %}
+                                                                                    {% if item == card.category %}
+                                                                                        <option value={{ item.id }} selected>{{ item }}</option>
+                                                                                    {% elif item.name != 'Done' %}
+                                                                                        <option value={{ item.id }}>{{ item }}</option>
+                                                                                    {% endif %}
+                                                                                {% endfor %}
+                                                                            {% endif %}
+                                                                            {% if card.category.name == 'Ready' %}
+                                                                                {% for item in category|slice:"2:4" %}
+                                                                                    {% if item == card.category %}
+                                                                                        <option value={{ item.id }} selected>{{ item }}</option>
+                                                                                    {% elif item.name != 'Done' %}
+                                                                                        <option value={{ item.id }}>{{ item }}</option>
+                                                                                    {% endif %}
+                                                                                {% endfor %}
+                                                                            {% endif %}
+                                                                        </select>
+                                                                    </div>
+                                                                {% endif %}
                                                             {% endif %}
                                                             {% if request.user.is_superuser or request.user.is_staff %}
                                                                 <div class="mb-3">
@@ -153,6 +155,7 @@
                                                                     </select>
                                                                 </div>
                                                             {% endif %}
+
                                                             {% if request.user.is_superuser or request.user.is_staff %}
                                                                 <div class="mb-3">
                                                                     <label for="user_pic_for_{{ card.id }}"

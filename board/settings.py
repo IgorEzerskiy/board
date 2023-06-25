@@ -86,6 +86,9 @@ DATABASES = {
         'PASSWORD': '76buhobu',
         'HOST': 'localhost',
         'PORT': '5432',
+        'TEST': {
+            'NAME': 'test_board_db',
+        }
     }
 }
 
@@ -131,7 +134,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TOKEN_LIFETIME = 30000000000  # seconds
-ALLOWED_TIME_OF_USER_INACTIVITY = 10  # seconds
+ALLOWED_TIME_OF_USER_INACTIVITY = 30000000000  # seconds
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
